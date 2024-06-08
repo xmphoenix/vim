@@ -134,6 +134,7 @@ Plugin 'w0ng/vim-hybrid'
 Plugin 'yggdroot/indentline'
 Plugin 'easymotion/vim-easymotion'
 Plugin 'mileszs/ack.vim'
+Plugin 'rking/ag.vim'
 Plugin 'gdbmgr'
 Plugin 'scrooloose/nerdcommenter'
 Plugin 'Yggdroot/indentLine' " Indentation level"
@@ -153,6 +154,24 @@ call vundle#end()            " required
 filetype plugin indent on    " required
 
 "Ack
+
+"Ag https://github.com/rking/ag.vim
+"Keyboard Shortcuts
+"e    to open file and close the quickfix window
+"o    to open (same as enter)
+"go   to preview file (open but maintain focus on ag.vim results)
+"t    to open in new tab
+"T    to open in new tab silently
+"h    to open in horizontal split
+"H    to open in horizontal split silently
+"v    to open in vertical split
+"gv   to open in vertical split silently
+"q    to close the quickfix window
+let g:ag_prg="ag --vimgrep --smart-case"
+let g:ag_highlight=1
+let g:ag_working_path_mode="r"
+noremap <leader>sa :<C-U><C-R>=printf("Ag %s ", expand("<cword>"))<CR><CR>
+
 
 "vim-startify
 autocmd VimEnter * Startify
