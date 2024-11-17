@@ -1,4 +1,3 @@
-
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " 通用设置
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -66,7 +65,7 @@ set confirm             " 在处理未保存或只读文件的时候，弹出确
 set langmenu=zh_CN.UTF-8
 set helplang=cn
 set termencoding=utf-8
-set encoding=utf8
+set encoding=UTF-8
 set fileencodings=utf8,ucs-bom,gbk,cp936,gb2312,gb18030
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
@@ -119,12 +118,12 @@ set rtp+=~/.vim/bundle/Vundle.vim
 call vundle#begin()
 Plugin 'VundleVim/Vundle.vim'
 "Plugin 'Valloric/YouCompleteMe'
-Plugin 'scrooloose/nerdtree'
+Plugin 'preservim/nerdtree'
 Plugin 'ryanoasis/vim-devicons'
+Plugin 'jistr/vim-nerdtree-tabs'
 Plugin 'Xuyuanp/nerdtree-git-plugin'
 Plugin 'tiagofumo/vim-nerdtree-syntax-highlight'
 Plugin 'majutsushi/tagbar'
-Plugin 'jistr/vim-nerdtree-tabs'
 Plugin 'vim-airline/vim-airline' 
 Plugin 'vim-airline/vim-airline-themes' 
 Plugin 'jiangmiao/auto-pairs'
@@ -144,6 +143,7 @@ Plugin 'nelstrom/vim-visual-star-search'
 Plugin 'ludovicchabant/vim-gutentags'
 Plugin 'jlanzarotta/bufexplorer'
 Plugin 'morhetz/gruvbox'
+Plugin 'xmphoenix/dynamic_keybindings'
 
 "Plugin 'w0rp/ale'
 Plugin 'mbbill/echofunc'
@@ -184,12 +184,16 @@ autocmd vimenter * ++nested colorscheme gruvbox
 set background=dark    " Setting dark mode
 "set background=light   " Setting light mode
 
-"vim-devicons
+"vim-devicons https://github.com/ryanoasis/vim-devicons
 " Can be enabled or disabled
 let g:devicons_enable = 1
 let g:webdevicons_enable_nerdtree = 1
 
-"nerdtree-git-plugin
+"vim-nerdtree-tabs https://github.com/jistr/vim-nerdtree-tabs
+
+
+
+"nerdtree-git-plugin https://github.com/Xuyuanp/nerdtree-git-plugin
 let g:NERDTreeGitStatusUseNerdFonts = 1 " you should install nerdfonts by yourself. default: 0
 let g:NERDTreeGitStatusShowIgnored = 1 " a heavy feature may cost much more time. default: 0
 let g:NERDTreeGitStatusIndicatorMapCustom = {
@@ -207,7 +211,7 @@ let g:NERDTreeGitStatusIndicatorMapCustom = {
 
 
 
-"vim-nerdtree-syntax-highlight
+"vim-nerdtree-syntax-highlight https://github.com/tiagofumo/vim-nerdtree-syntax-highlight
 let g:NERDTreeFileExtensionHighlightFullName = 1
 let g:NERDTreeExactMatchHighlightFullName = 1
 let g:NERDTreePatternMatchHighlightFullName = 1
@@ -246,7 +250,9 @@ let g:NERDTreePatternMatchHighlightColor['.*_spec\.rb$'] = s:rspec_red " sets th
 let g:WebDevIconsDefaultFolderSymbolColor = s:beige " sets the color for folders that did not match any rule
 let g:WebDevIconsDefaultFileSymbolColor = s:blue " sets the color for files that did not match any rule
 
-"Airline
+"vim-airline
+let g:airline_section_b = '%{strftime("%c")}'
+let g:airline_section_y = 'BN:%{bufnr("%")}'
 let g:airline#extensions#tabline#enabled = 1
 let g:airline#extensions#tabline#left_alt_sep = '|'
 let g:airline#extensions#tabline#formatter = 'unique_tail_improved'
@@ -267,6 +273,11 @@ nmap <leader>6 <Plug>AirlineSelectTab6
 nmap <leader>7 <Plug>AirlineSelectTab7
 nmap <leader>8 <Plug>AirlineSelectTab8
 nmap <leader>9 <Plug>AirlineSelectTab9
+nmap <leader>0 <Plug>AirlineSelectTab0
+nmap <leader>- <Plug>AirlineSelectPrevTab
+nmap <leader>+ <Plug>AirlineSelectNextTab
+
+"nmap <leader>5 :AirlineSelectTab 5<CR>
 
 "vim-airline-themes
 "let g:airline_theme='solarized'
@@ -278,7 +289,10 @@ let NERDTreeWinSize=25
 let NERDTreeAutoCenter=1
 let NERDTreeShowBookmarks=1
 "let g:NERDTreeFileLines = 1
+nnoremap <leader>n :NERDTreeFocus<CR>
+nnoremap <C-n> :NERDTree<CR>
 nnoremap <C-t> :NERDTreeToggle<CR>
+nnoremap <C-j> :NERDTreeFind<CR>
 " Start NERDTree when Vim is started without file arguments.
 autocmd StdinReadPre * let s:std_in=1
 autocmd VimEnter * if argc() == 0 && !exists('s:std_in') | NERDTree | endif
@@ -290,7 +304,7 @@ autocmd BufEnter * if winnr() == winnr('h') && bufname('#') =~ 'NERD_tree_\d\+' 
 
 
 "Tagbar : https://github.com/preservim/tagbar
-nmap <F1> :TagbarToggle<CR>
+nnoremap <F1> :TagbarToggle<CR>
 let g:tagbar_width = 30
 let g:tagbar_sort = 0
 "let g:tagbar_left = 1
