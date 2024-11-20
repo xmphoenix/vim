@@ -117,7 +117,9 @@ filetype off                  " required
 set rtp+=~/.vim/bundle/Vundle.vim
 call vundle#begin()
 Plugin 'VundleVim/Vundle.vim'
-"Plugin 'Valloric/YouCompleteMe'
+Plugin 'w0ng/vim-hybrid'
+Plugin 'morhetz/gruvbox'
+Plugin 'mhinz/vim-startify'
 Plugin 'preservim/nerdtree'
 Plugin 'ryanoasis/vim-devicons'
 Plugin 'jistr/vim-nerdtree-tabs'
@@ -128,8 +130,6 @@ Plugin 'vim-airline/vim-airline'
 Plugin 'vim-airline/vim-airline-themes' 
 Plugin 'jiangmiao/auto-pairs'
 Plugin 'mbbill/undotree'
-Plugin 'mhinz/vim-startify'
-Plugin 'w0ng/vim-hybrid'
 Plugin 'yggdroot/indentline'
 Plugin 'easymotion/vim-easymotion'
 Plugin 'mileszs/ack.vim'
@@ -142,39 +142,14 @@ Plugin 'yianwillis/vimcdoc'
 Plugin 'nelstrom/vim-visual-star-search'
 Plugin 'ludovicchabant/vim-gutentags'
 Plugin 'jlanzarotta/bufexplorer'
-Plugin 'morhetz/gruvbox'
 Plugin 'xmphoenix/dynamic_keybindings'
-
 "Plugin 'w0rp/ale'
 Plugin 'mbbill/echofunc'
 Plugin 'Yggdroot/LeaderF', { 'do': ':LeaderfInstallCExtension' }
-
+"Plugin 'Valloric/YouCompleteMe'
 " All of your Plugins must be added before the following line
 call vundle#end()            " required
 filetype plugin indent on    " required
-
-"Ack
-
-"Ag https://github.com/rking/ag.vim
-"Keyboard Shortcuts
-"e    to open file and close the quickfix window
-"o    to open (same as enter)
-"go   to preview file (open but maintain focus on ag.vim results)
-"t    to open in new tab
-"T    to open in new tab silently
-"h    to open in horizontal split
-"H    to open in horizontal split silently
-"v    to open in vertical split
-"gv   to open in vertical split silently
-"q    to close the quickfix window
-let g:ag_prg="ag --vimgrep --smart-case"
-let g:ag_highlight=1
-let g:ag_working_path_mode="r"
-noremap <leader>sa :<C-U><C-R>=printf("Ag %s ", expand("<cword>"))<CR><CR>
-
-
-"vim-startify
-autocmd VimEnter * Startify
 
 "vim-hybrid
 colorscheme hybrid
@@ -184,14 +159,33 @@ autocmd vimenter * ++nested colorscheme gruvbox
 set background=dark    " Setting dark mode
 "set background=light   " Setting light mode
 
+"vim-startify
+autocmd VimEnter * Startify
+
+"Nerdtree : https://github.com/preservim/nerdtree
+let NERDTreeWinSize=25
+let NERDTreeAutoCenter=1
+let NERDTreeShowBookmarks=1
+"let g:NERDTreeFileLines = 1
+nnoremap <leader>n :NERDTreeFocus<CR>
+nnoremap <C-n> :NERDTree<CR>
+nnoremap <C-t> :NERDTreeToggle<CR>
+nnoremap <C-j> :NERDTreeFind<CR>
+" Start NERDTree when Vim is started without file arguments.
+autocmd StdinReadPre * let s:std_in=1
+autocmd VimEnter * if argc() == 0 && !exists('s:std_in') | NERDTree | endif
+" Exit Vim if NERDTree is the only window remaining in the only tab.
+autocmd BufEnter * if tabpagenr('$') == 1 && winnr('$') == 1 && exists('b:NERDTree') && b:NERDTree.isTabTree() | quit | endif
+" If another buffer tries to replace NERDTree, put it in the other window, and bring back NERDTree.
+autocmd BufEnter * if winnr() == winnr('h') && bufname('#') =~ 'NERD_tree_\d\+' && bufname('%') !~ 'NERD_tree_\d\+' && winnr('$') > 1 |
+    \ let buf=bufnr() | buffer# | execute "normal! \<C-W>w" | execute 'buffer'.buf | endif
+
 "vim-devicons https://github.com/ryanoasis/vim-devicons
 " Can be enabled or disabled
 let g:devicons_enable = 1
 let g:webdevicons_enable_nerdtree = 1
 
 "vim-nerdtree-tabs https://github.com/jistr/vim-nerdtree-tabs
-
-
 
 "nerdtree-git-plugin https://github.com/Xuyuanp/nerdtree-git-plugin
 let g:NERDTreeGitStatusUseNerdFonts = 1 " you should install nerdfonts by yourself. default: 0
@@ -208,8 +202,6 @@ let g:NERDTreeGitStatusIndicatorMapCustom = {
                 \ 'Clean'     :'✔︎',
                 \ 'Unknown'   :'?',
                 \ }
-
-
 
 "vim-nerdtree-syntax-highlight https://github.com/tiagofumo/vim-nerdtree-syntax-highlight
 let g:NERDTreeFileExtensionHighlightFullName = 1
@@ -250,6 +242,14 @@ let g:NERDTreePatternMatchHighlightColor['.*_spec\.rb$'] = s:rspec_red " sets th
 let g:WebDevIconsDefaultFolderSymbolColor = s:beige " sets the color for folders that did not match any rule
 let g:WebDevIconsDefaultFileSymbolColor = s:blue " sets the color for files that did not match any rule
 
+"Tagbar : https://github.com/preservim/tagbar
+nnoremap <F1> :TagbarToggle<CR>
+let g:tagbar_width = 30
+let g:tagbar_sort = 0
+"let g:tagbar_left = 1
+let g:tagbar_ctags_bin = '/usr/bin/ctags'
+autocmd BufReadPost *.cpp,*.c,*.h,*.hpp,*.cc,*.cxx call tagbar#autoopen()
+
 "vim-airline
 let g:airline_section_b = '%{strftime("%c")}'
 let g:airline_section_y = 'BN:%{bufnr("%")}'
@@ -283,34 +283,24 @@ nmap <leader>+ <Plug>AirlineSelectNextTab
 "let g:airline_theme='solarized'
 let g:airline_theme='angr' 
 
+"Ack
 
-"Nerdtree : https://github.com/preservim/nerdtree
-let NERDTreeWinSize=25
-let NERDTreeAutoCenter=1
-let NERDTreeShowBookmarks=1
-"let g:NERDTreeFileLines = 1
-nnoremap <leader>n :NERDTreeFocus<CR>
-nnoremap <C-n> :NERDTree<CR>
-nnoremap <C-t> :NERDTreeToggle<CR>
-nnoremap <C-j> :NERDTreeFind<CR>
-" Start NERDTree when Vim is started without file arguments.
-autocmd StdinReadPre * let s:std_in=1
-autocmd VimEnter * if argc() == 0 && !exists('s:std_in') | NERDTree | endif
-" Exit Vim if NERDTree is the only window remaining in the only tab.
-autocmd BufEnter * if tabpagenr('$') == 1 && winnr('$') == 1 && exists('b:NERDTree') && b:NERDTree.isTabTree() | quit | endif
-" If another buffer tries to replace NERDTree, put it in the other window, and bring back NERDTree.
-autocmd BufEnter * if winnr() == winnr('h') && bufname('#') =~ 'NERD_tree_\d\+' && bufname('%') !~ 'NERD_tree_\d\+' && winnr('$') > 1 |
-    \ let buf=bufnr() | buffer# | execute "normal! \<C-W>w" | execute 'buffer'.buf | endif
-
-
-"Tagbar : https://github.com/preservim/tagbar
-nnoremap <F1> :TagbarToggle<CR>
-let g:tagbar_width = 30
-let g:tagbar_sort = 0
-"let g:tagbar_left = 1
-let g:tagbar_ctags_bin = '/usr/bin/ctags'
-autocmd BufReadPost *.cpp,*.c,*.h,*.hpp,*.cc,*.cxx call tagbar#autoopen()
-
+"Ag https://github.com/rking/ag.vim
+"Keyboard Shortcuts
+"e    to open file and close the quickfix window
+"o    to open (same as enter)
+"go   to preview file (open but maintain focus on ag.vim results)
+"t    to open in new tab
+"T    to open in new tab silently
+"h    to open in horizontal split
+"H    to open in horizontal split silently
+"v    to open in vertical split
+"gv   to open in vertical split silently
+"q    to close the quickfix window
+let g:ag_prg="ag --vimgrep --smart-case"
+let g:ag_highlight=1
+let g:ag_working_path_mode="r"
+noremap <leader>sa :<C-U><C-R>=printf("Ag %s ", expand("<cword>"))<CR><CR>
 
 "Leaderf : https://github.com/Yggdroot/LeaderF
 "https://github.com/Yggdroot/LeaderF/wiki/Leaderf-rg
@@ -369,7 +359,6 @@ noremap <leader>fd :<C-U><C-R>=printf("Leaderf! gtags -d %s --auto-jump", expand
 noremap <leader>fo :<C-U><C-R>=printf("Leaderf! gtags --recall %s", "")<CR><CR>
 noremap <leader>fn :<C-U><C-R>=printf("Leaderf gtags --next %s", "")<CR><CR>
 noremap <leader>fp :<C-U><C-R>=printf("Leaderf gtags --previous %s", "")<CR><CR>
-
 
 "YCM : https://github.com/ycm-core/YouCompleteMe
 let g:ycm_server_python_interpreter='/usr/bin/python3'
