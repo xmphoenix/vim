@@ -132,6 +132,7 @@ Plugin 'jiangmiao/auto-pairs'
 Plugin 'mbbill/undotree'
 Plugin 'easymotion/vim-easymotion'
 Plugin 'rking/ag.vim'
+Plugin 'yuttie/comfortable-motion.vim'
 Plugin 'gdbmgr'
 Plugin 'scrooloose/nerdcommenter'
 Plugin 'Yggdroot/indentLine'
@@ -379,6 +380,14 @@ omap / <Plug>(easymotion-tn)
 map  n <Plug>(easymotion-next)
 map  N <Plug>(easymotion-prev)
 
+"https://github.com/yuttie/comfortable-motion.vim
+let g:comfortable_motion_friction = 80.0
+let g:comfortable_motion_air_drag = 2.0
+nnoremap <silent> <C-e> :call comfortable_motion#flick(100)<CR>
+nnoremap <silent> <C-y> :call comfortable_motion#flick(-100)<CR>
+noremap <silent> <ScrollWheelDown> :call comfortable_motion#flick(40)<CR>
+noremap <silent> <ScrollWheelUp>   :call comfortable_motion#flick(-40)<CR>
+
 
 "Leaderf : https://github.com/Yggdroot/LeaderF
 "https://github.com/Yggdroot/LeaderF/wiki/Leaderf-rg
@@ -426,7 +435,7 @@ noremap <Leader>c :<C-U><C-R>=printf("Leaderf! rg -e %s -t cpp -g !*.hpp", expan
 "should use `Leaderf gtags --update` first
 let g:Lf_GtagsAutoGenerate = 1
 let g:Lf_Gtagslabel = 'native-pygments'
-noremap <leader>f :LeaderfSelf<cr>
+noremap <leader>fs :LeaderfSelf<cr>
 noremap <leader>ff :LeaderfFile<cr>
 noremap <leader>fm :LeaderfMru<cr>
 noremap <leader>fu :LeaderfFunction<cr>
