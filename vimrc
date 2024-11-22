@@ -70,10 +70,10 @@ set fileencodings=utf8,ucs-bom,gbk,cp936,gb2312,gb18030
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
 " 替换方向键为调节分屏大小 ALT + ->/<- key
-map <M-up> :res -5<CR>
-map <M-down> :res +5<CR>
-map <M-left> :vertical resize-5<CR>
-map <M-right> :vertical resize+5<CR>
+map <M-up> :res-1<CR>
+map <M-down> :res+1<CR>
+map <M-left> :vertical resize-1<CR>
+map <M-right> :vertical resize+1<CR>
 
 " 复制系统到 vim
 vnoremap <C-y> "+y
@@ -130,20 +130,17 @@ Plugin 'vim-airline/vim-airline'
 Plugin 'vim-airline/vim-airline-themes' 
 Plugin 'jiangmiao/auto-pairs'
 Plugin 'mbbill/undotree'
-Plugin 'yggdroot/indentline'
 Plugin 'easymotion/vim-easymotion'
-Plugin 'mileszs/ack.vim'
 Plugin 'rking/ag.vim'
 Plugin 'gdbmgr'
 Plugin 'scrooloose/nerdcommenter'
-Plugin 'Yggdroot/indentLine' " Indentation level"
-Plugin 'bling/vim-bufferline' " Buffer line"
+Plugin 'Yggdroot/indentLine'
+Plugin 'bling/vim-bufferline'
 Plugin 'yianwillis/vimcdoc'
 Plugin 'nelstrom/vim-visual-star-search'
-Plugin 'ludovicchabant/vim-gutentags'
 Plugin 'jlanzarotta/bufexplorer'
 Plugin 'xmphoenix/dynamic_keybindings'
-"Plugin 'w0rp/ale'
+Plugin 'w0rp/ale'
 Plugin 'mbbill/echofunc'
 Plugin 'Yggdroot/LeaderF', { 'do': ':LeaderfInstallCExtension' }
 "Plugin 'Valloric/YouCompleteMe'
@@ -252,11 +249,12 @@ autocmd BufReadPost *.cpp,*.c,*.h,*.hpp,*.cc,*.cxx call tagbar#autoopen()
 
 "vim-airline
 let g:airline_section_b = '%{strftime("%c")}'
+let g:airline_section_c = airline#section#create_left(['file'])
 let g:airline_section_y = 'BN:%{bufnr("%")}'
 let g:airline#extensions#tabline#enabled = 1
 let g:airline#extensions#tabline#left_alt_sep = '|'
-let g:airline#extensions#tabline#formatter = 'unique_tail_improved'
-let g:airline_statusline_ontop = 1
+let g:airline#extensions#tabline#formatter = 'unique_tail'
+"let g:airline_statusline_ontop = 1
 let g:airline#extensions#tabline#tab_nr_type = 1 " tab number
 let g:airline#extensions#tabline#show_tab_nr = 1
 let g:airline#extensions#tabline#buffer_nr_show = 0
@@ -277,13 +275,16 @@ nmap <leader>0 <Plug>AirlineSelectTab0
 nmap <leader>- <Plug>AirlineSelectPrevTab
 nmap <leader>+ <Plug>AirlineSelectNextTab
 
+"let g:airline#extensions#tabline#buffer_idx_mode = 2
+"nmap <Leader>10 <Plug>AirlineSelectTab10
+"nmap <Leader>11 <Plug>AirlineSelectTab11
+"nmap <Leader>12 <Plug>AirlineSelectTab12
+
 "nmap <leader>5 :AirlineSelectTab 5<CR>
 
 "vim-airline-themes
 "let g:airline_theme='solarized'
 let g:airline_theme='angr' 
-
-"Ack
 
 "Ag https://github.com/rking/ag.vim
 "Keyboard Shortcuts
@@ -302,6 +303,83 @@ let g:ag_highlight=1
 let g:ag_working_path_mode="r"
 noremap <leader>sa :<C-U><C-R>=printf("Ag %s ", expand("<cword>"))<CR><CR>
 
+"Auto-pairs https://github.com/jiangmiao/auto-pairs
+
+"Undotree https://github.com/mbbill/undotree
+if has("persistent_undo")
+   let target_path = expand('~/.vim/undodir')
+
+    " create the directory and any parent directories
+    " if the location does not exist.
+    if !isdirectory(target_path)
+        call mkdir(target_path, "p", 0700)
+    endif
+
+    let &undodir=target_path
+    set undofile
+    "置撤销历史的最大数量
+    set undolevels=1000
+    "设置撤销历史文件的大小限制
+    set undoreload=10000
+endif
+
+if !exists('g:undotree_WindowLayout')
+    let g:undotree_WindowLayout = 2
+endif
+
+"IndentLine https://github.com/Yggdroot/indentLine
+let g:indentLine_color_term = 239
+" Background (Vim, GVim)
+let g:indentLine_bgcolor_term = 202
+let g:indentLine_bgcolor_gui = '#FF5F00'
+
+" 使用补丁字体中的符号作为缩进线
+let g:indentLine_char = '▏'      " 选择适合的符号
+" 设置缩进线颜色
+highlight IndentLine guifg=#3E4451
+" 忽略特定文件类型
+let g:indentLine_fileTypeExclude = ['help', 'dashboard']
+" 忽略特定缓冲区类型
+let g:indentLine_bufTypeExclude = ['terminal']
+
+
+"bufexplorer https://github.com/jlanzarotta/bufexplorer
+""\<Leader\>be normal open
+"\<Leader\>bt toggle open / close
+"\<Leader\>bs force horizontal split open
+"\<Leader\>bv force vertical split open
+
+
+"ALE https://github.com/dense-analysis/ale
+let g:ale_echo_msg_error_str = 'E'
+let g:ale_echo_msg_warning_str = 'W'
+let g:ale_echo_msg_format = '[%linter%] %s [%severity%]'
+" Set this. Airline will handle the rest.
+let g:airline#extensions#ale#enabled = 1
+
+"vim-easymotion https://github.com/easymotion/vim-easymotion
+" <Leader>f{char} to move to {char}
+map  <Leader>r <Plug>(easymotion-bd-f)
+nmap <Leader>r <Plug>(easymotion-overwin-f)
+" s{char}{char} to move to {char}{char}
+nmap s <Plug>(easymotion-overwin-f2)
+" Move to line
+map <Leader>L <Plug>(easymotion-bd-jk)
+nmap <Leader>L <Plug>(easymotion-overwin-line)
+" Move to word
+map  <Leader>w <Plug>(easymotion-bd-w)
+nmap <Leader>w <Plug>(easymotion-overwin-w)
+
+map  / <Plug>(easymotion-sn)
+omap / <Plug>(easymotion-tn)
+
+" These `n` & `N` mappings are options. You do not have to map `n` & `N` to EasyMotion.
+" Without these mappings, `n` & `N` works fine. (These mappings just provide
+" different highlight method and have some other features )
+map  n <Plug>(easymotion-next)
+map  N <Plug>(easymotion-prev)
+
+
 "Leaderf : https://github.com/Yggdroot/LeaderF
 "https://github.com/Yggdroot/LeaderF/wiki/Leaderf-rg
 "https://github.com/Yggdroot/LeaderF/wiki/Leaderf-gtags
@@ -316,6 +394,9 @@ let g:Lf_RgConfig = [
 let g:Lf_PreviewInPopup = 1
 " open the preview window automatically
 let g:Lf_PreviewResult = {'Rg': 1 }
+let g:Lf_UseCache = 1               " 启用缓存
+let g:Lf_ShowHidden = 1             " 显示隐藏文件
+let g:Lf_Fuzzy = 1                  " 启用模糊搜索
 
 " search word under cursor, the pattern is treated as regex, and enter normal mode directly
 noremap <C-F> :<C-U><C-R>=printf("Leaderf! rg -e %s ", expand("<cword>"))<CR>
