@@ -149,6 +149,15 @@ Plugin 'Yggdroot/LeaderF', { 'do': ':LeaderfInstallCExtension' }
 call vundle#end()            " required
 filetype plugin indent on    " required
 
+
+"use the cursor save function
+if has("autocmd")
+  autocmd BufReadPost *
+        \ if line("'\"") > 0 && line("'\"") <= line("$") |
+        \   exe "normal! g`\"" |
+        \ endif
+endif
+
 "vim-hybrid
 colorscheme hybrid
 
@@ -360,10 +369,18 @@ let g:airline#extensions#ale#enabled = 1
 
 "vim-easymotion https://github.com/easymotion/vim-easymotion
 " <Leader>f{char} to move to {char}
+" 启用 EasyMotion 的默认映射
+let g:EasyMotion_do_mapping = 1
+
+" 启用跨屏搜索
+let g:EasyMotion_off_screen_search = 1
+
 map  <Leader>r <Plug>(easymotion-bd-f)
 nmap <Leader>r <Plug>(easymotion-overwin-f)
 " s{char}{char} to move to {char}{char}
-nmap s <Plug>(easymotion-overwin-f2)
+" Gif config
+nmap s <Plug>(easymotion-s2)
+nmap t <Plug>(easymotion-t2)
 " Move to line
 map <Leader>L <Plug>(easymotion-bd-jk)
 nmap <Leader>L <Plug>(easymotion-overwin-line)
@@ -371,6 +388,7 @@ nmap <Leader>L <Plug>(easymotion-overwin-line)
 map  <Leader>w <Plug>(easymotion-bd-w)
 nmap <Leader>w <Plug>(easymotion-overwin-w)
 
+" 为前向搜索映射 '/'
 map  / <Plug>(easymotion-sn)
 omap / <Plug>(easymotion-tn)
 
@@ -381,10 +399,11 @@ map  n <Plug>(easymotion-next)
 map  N <Plug>(easymotion-prev)
 
 "https://github.com/yuttie/comfortable-motion.vim
+let g:comfortable_motion_no_default_key_mappings = 1
 let g:comfortable_motion_friction = 80.0
 let g:comfortable_motion_air_drag = 2.0
-nnoremap <silent> <C-e> :call comfortable_motion#flick(100)<CR>
-nnoremap <silent> <C-y> :call comfortable_motion#flick(-100)<CR>
+nnoremap <silent> <C-e> :call comfortable_motion#flick(200)<CR>
+nnoremap <silent> <C-y> :call comfortable_motion#flick(-200)<CR>
 noremap <silent> <ScrollWheelDown> :call comfortable_motion#flick(40)<CR>
 noremap <silent> <ScrollWheelUp>   :call comfortable_motion#flick(-40)<CR>
 
@@ -407,8 +426,19 @@ let g:Lf_UseCache = 1               " 启用缓存
 let g:Lf_ShowHidden = 1             " 显示隐藏文件
 let g:Lf_Fuzzy = 1                  " 启用模糊搜索
 
+
+function! FindGitRootDirectory()
+  let l:gitdir = finddir('.git', expand('%:p:h').' ;')
+  if empty(l:gitdir)
+    return getcwd()
+  else
+    return fnamemodify(l:gitdir, ':h')
+  endif
+endfunction
+
 " search word under cursor, the pattern is treated as regex, and enter normal mode directly
 noremap <C-F> :<C-U><C-R>=printf("Leaderf! rg -e %s ", expand("<cword>"))<CR>
+
 " search word under cursor, use --heading
 noremap <C-H> :<C-U><C-R>=printf("Leaderf! rg -e %s --heading -C3 ", expand("<cword>"))<CR>
 " search word under cursor, the pattern is treated as regex,
@@ -443,6 +473,9 @@ noremap <leader>fb :LeaderfBufTagAll<cr>
 noremap <leader>ft :LeaderfBufTag<cr>
 noremap <leader>fl :LeaderfLine<cr>
 noremap <leader>fw :LeaderfWindow<cr>
+
+noremap <leader>fa :<C-U><C-R>=printf("Leaderf! rg -e %s %s", expand("<cword>"), FindGitRootDirectory())<CR>
+noremap <leader>fc :<C-U><C-R>=printf("Leaderf! rg -e %s", expand("<cword>"))<CR>
 
 noremap <leader>fr :<C-U><C-R>=printf("Leaderf! gtags -r %s --auto-jump", expand("<cword>"))<CR><CR>
 noremap <leader>fd :<C-U><C-R>=printf("Leaderf! gtags -d %s --auto-jump", expand("<cword>"))<CR><CR>
